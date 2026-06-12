@@ -3,11 +3,36 @@ const loadLessons = () => {
         .then((res) => res.json()) // Converting the response to JSON
         .then((json) => displayLesson(json.data))
 }; 
+
+const removeActive = ()=>{
+    const lessonButtons = document.querySelectorAll(".lesson-btn");
+    lessonButtons.forEach((btn) => btn.classList.remove("active"));
+};
+
 const loadLevelWord = (id) => {
     const url = `https://openapi.programming-hero.com/api/level/${id}`;  
     fetch(url)
     .then((res) => res.json())
-    .then((data) => displayLevelWord(data.data));
+    .then((data) => {
+        removeActive(); //remove all active class from buttons.
+        const clickBtn = document.getElementById(`lesson-btn-${id}`);
+        clickBtn.classList.add("active"); //add active class to the clicked button.
+        displayLevelWord(data.data);
+    });
+};
+
+const loadWordDetail = async(id) => {
+    const url = `https://openapi.programming-hero.com/api/word/${id}`;
+    const res = await fetch(url); 
+    const details = await res.json();
+    displayWordDetails(details.data);
+};
+
+const displayWordDetails = (word) => {
+    console.log(word);
+    const detailsBox = document.getElementById("details-container");
+    // detailsBox.innerHTML = "Hi I am from js";
+    document.getElementById("word_modal").showModal();
 };
 
 const displayLevelWord = (words) => {
@@ -43,16 +68,18 @@ const displayLevelWord = (words) => {
         <p class="font-semibold ">Meaning / Pronunciation</p>
         <div class="font-medium text-2xl font-bangla">"${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${word.pronunciation ? word.pronunciation : "pronunciation পাওয়া যায়নি"}"</div>
         <div class="flex justify-between items-center">
-            <button class="btn bg-[#1A91FF20] hover:bg-[#1A91FF80]"><i class="fa-solid fa-circle-info"></i></button>
-            <button class="btn bg-[#1A91FF20] hover:bg-[#1A91FF80]"><i class="fa-solid fa-volume-high"></i></button>
+            <button onclick="loadWordDetail(${word.id})" class="btn bg-[#1A91FF20] hover:bg-[#1A91FF80]">
+            <i class="fa-solid fa-circle-info"></i>
+            </button>
+            <button class="btn bg-[#1A91FF20] hover:bg-[#1A91FF80]">
+            <i class="fa-solid fa-volume-high"></i>
+            </button>
         </div>
         </div>
         `;
         wordContainer.append(card);
     });
 };
-
-
 
 const displayLesson = (lessons) => {
     // 1. get the container & empty
@@ -64,7 +91,9 @@ const displayLesson = (lessons) => {
         // 3. create element & set innerHTML
         const btnDiv = document.createElement("div");
         btnDiv.innerHTML = `
-                <button onclick="loadLevelWord(${lesson.level_no})" class="btn btn-outline btn-primary">
+                <button id="lesson-btn-${lesson.level_no}" 
+                onclick="loadLevelWord(${lesson.level_no})" 
+                class="btn btn-outline btn-primary lesson-btn">
                 <i class="fa-solid fa-book-open"></i> Lesson - ${lesson.level_no}
                 </button>
         `;
@@ -73,4 +102,5 @@ const displayLesson = (lessons) => {
         levelContainer.appendChild(btnDiv);
     }
 };
+
 loadLessons(); 
