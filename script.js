@@ -1,3 +1,8 @@
+const createElements = (arr) => {
+const htmlElements = arr.map(el => `<span class="btn">${el}</span>`);
+return htmlElements.join(' ');
+};
+
 const loadLessons = () => {
     fetch("https://openapi.programming-hero.com/api/levels/all") // Fetching data from the API
         .then((res) => res.json()) // Converting the response to JSON
@@ -28,10 +33,29 @@ const loadWordDetail = async(id) => {
     displayWordDetails(details.data);
 };
 
+
 const displayWordDetails = (word) => {
     console.log(word);
     const detailsBox = document.getElementById("details-container");
-    // detailsBox.innerHTML = "Hi I am from js";
+    detailsBox.innerHTML = `
+    <div>
+            <h2 class="text-2xl font-bold">
+            ${word.word} (<i class="fa-solid fa-microphone-lines"></i>  :${word.pronunciation})</h2>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold">Meaning </h2>
+            <p>${word.meaning}</p>
+        </div>
+        <div>
+            <h2 class="font-bold">Example </h2>
+            <p>${word.sentence}</p>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold">সমার্থক শব্দ গুলো</h2>
+            <div class="">${createElements(word.synonyms)}</div>
+        </div>
+
+    `;
     document.getElementById("word_modal").showModal();
 };
 
