@@ -3,6 +3,16 @@ const htmlElements = arr.map(el => `<span class="btn">${el}</span>`);
 return htmlElements.join(' ');
 };
 
+const manageSpinner = (status) => {
+    if (status == true){
+        document.getElementById("spinner").classList.remove("hidden");
+        document.getElementById("word-container").classList.add("hidden");
+    } else {
+        document.getElementById("word-container").classList.remove("hidden");
+        document.getElementById("spinner").classList.add("hidden");
+    }
+};
+
 const loadLessons = () => {
     fetch("https://openapi.programming-hero.com/api/levels/all") // Fetching data from the API
         .then((res) => res.json()) // Converting the response to JSON
@@ -15,6 +25,7 @@ const removeActive = ()=>{
 };
 
 const loadLevelWord = (id) => {
+    manageSpinner(true);
     const url = `https://openapi.programming-hero.com/api/level/${id}`;  
     fetch(url)
     .then((res) => res.json())
@@ -50,7 +61,7 @@ const displayWordDetails = (word) => {
             <h2 class="font-bold">Example </h2>
             <p>${word.sentence}</p>
         </div>
-        <div>
+        <div class="space-y-3">
             <h2 class="text-xl font-bold">সমার্থক শব্দ গুলো</h2>
             <div class="">${createElements(word.synonyms)}</div>
         </div>
@@ -71,6 +82,7 @@ const displayLevelWord = (words) => {
      <p class="text-xl font-medium text-[#79716B]">এই Lesson এ এখনো কোন Vocabulary যুক্ত করা হয়নি।</p>
     <h2 class="text-4xl font-bold">একটি Lesson Select করুন।</h2>
      </div>`;
+     manageSpinner(false);
         return;
     }
 
@@ -102,6 +114,7 @@ const displayLevelWord = (words) => {
         </div>
         `;
         wordContainer.append(card);
+        manageSpinner(false);
     });
 };
 
